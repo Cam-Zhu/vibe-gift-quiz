@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vibe Gift Quiz</title>
+  <style>
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  gap: 1.5rem;
+}
+    :root {
+  --color-bg: #FDF5F6; /* soft blush pink */
+  --color-white: #FFFFFF;
+  --color-text-primary: #2D2D2D; /* rich charcoal */
+  --color-text-secondary: #6C7A89;
+  --color-accent: #E7B2A5; /* muted peach */
+  --color-highlight: #7D5A9F; /* elegant purple */
+  --color-button-hover: #EFDDF0;
+}
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+  font-family: 'Poppins', 'Helvetica Neue', sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  color: var(--color-highlight);
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  text-align: center;
+}
+
+    .quiz-block {
+      background-color: var(--color-white);
+      border-radius: 12px;
+      padding: 2em;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 2em;
+    }
+
+    .quiz-question {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1em;
+      color: var(--color-highlight);
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .quiz-option {
+      background-color: var(--color-bg);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 1em;
+      text-align: left;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--color-highlight);
+      background-color: var(--color-white);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--color-highlight);
+      background-color: var(--color-button-hover);
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+
+    #submit, #retake {
+      background-color: var(--color-highlight);
+      color: var(--color-white);
+      padding: 0.75em 1.5em;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1em;
+      display: inline-block;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    #submit:hover, #retake:hover {
+      background-color: var(--color-button-hover);
+      color: var(--color-text-primary);
+    }
+
+    #result {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  background-color: var(--color-white);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--color-highlight);
+}
+
+#result em {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-text-primary);
+}
+
+    .question {
+      margin-bottom: 2rem;
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .answers button {
+      font-size: 1rem;
+      padding: 1em;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      background-color: var(--color-bg);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: left;
+    }
+
+    .answers button:hover {
+      background-color: var(--color-white);
+      border-color: var(--color-highlight);
+    }
+
+    @media screen and (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .quiz-question {
+        font-size: 1.1rem;
+      }
+
+      .answers button {
+        font-size: 0.95rem;
+        padding: 0.75em;
+      }
+
+      #submit:hover, #retake:hover {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+}
+    }
+  </style>
+</head>
+<body>
+  <h1>What Vibe Are They?</h1>
+  <div id="quiz"></div>
+  <button id="submit" style="display: none;">Get Their Vibe</button>
+  <div id="result"></div>
+  <button id="retake" onclick="location.reload()">Retake Quiz</button>
+
+
+  
+  <script>
+    const quizData = [
+      {
+        question: "What is their ideal weekend?",
+        answers: [
+          { text: "Thrifting + crafting at home", tags: ["Crafty Goblin", "Vintage Lover", "DIY Dabbler"] },
+          { text: "Farmers market + tea in a sunbeam", tags: ["Cottagecore Witch", "Teatime Royalty", "Plant Parent"] },
+          { text: "Reading in a haunted library", tags: ["Dark Academia", "Goth Romantic", "Bookworm Babe"] },
+          { text: "Urban exploring with a camera", tags: ["Color Theory Enthusiast", "Hypebeast Hipster", "Modern Mystic"] },
+          { text: "Hiking & hammock naps", tags: ["Outdoor Adventurer", "Fitness Flirt", "Zero-Waste Wizard"] },
+          { text: "Curating the *perfect* playlist", tags: ["Music Collector", "Cozy Gamer", "Skater Poet"] }
+        ]
+      },
+      {
+        question: "Pick a drink they would vibe with:",
+        answers: [
+          { text: "Matcha in a handmade mug", tags: ["Minimalist Power Exec", "Wellness Guru", "Skincare Alchemist"] },
+          { text: "Black coffee with 3 existential crises", tags: ["Dark Academia", "Nerdy Hermit", "Goth Romantic"] },
+          { text: "Oat milk latte in a reusable cup", tags: ["Sustainable Queen", "Minimal Techie", "Coffee Snob"] },
+          { text: "Kombucha they brewed themselves", tags: ["Zero-Waste Wizard", "Cottagecore Witch", "Mindful Gifter"] },
+          { text: "A vintage soda in glass bottle", tags: ["Retro Gamer", "Snack Connoisseur", "Vintage Lover"] },
+          { text: "Something neon from a vending machine", tags: ["Kawaii Cutie", "Sparkle Goblin", "Color Theory Enthusiast"] }
+        ]
+      },
+      {
+        question: "How would they decorate a tiny space?",
+        answers: [
+          { text: "Plants. Everywhere.", tags: ["Plant Parent", "Cozy Gamer", "Sustainable Queen"] },
+          { text: "Monochrome with bold lighting", tags: ["Minimalist Power Exec", "Minimal Techie", "Skincare Alchemist"] },
+          { text: "Fairy lights, cozy rugs, and mystery", tags: ["Whimsical Fairy", "Modern Mystic", "Dark Academia"] },
+          { text: "Gallery wall of DIY chaos", tags: ["Artsy Maximalist", "Crafty Goblin", "DIY Dabbler"] },
+          { text: "Clean, neutral tones and one vintage lamp", tags: ["Light Academia", "Bookworm Babe", "Teatime Royalty"] },
+          { text: "Neon posters, stacked snacks, and tech", tags: ["Snack Connoisseur", "Retro Gamer", "Hypebeast Hipster"] }
+        ]
+      },
+      {
+        question: "Their vibe in a group chat is…",
+        answers: [
+          { text: "Sends daily memes + chaos", tags: ["Sparkle Goblin", "Chaotic Baker", "Cozy Gamer"] },
+          { text: "Writes heartfelt essays on birthdays", tags: ["Mindful Gifter", "Skater Poet", "Wellness Guru"] },
+          { text: "Shares book quotes and moon phases", tags: ["Celestial Dreamer", "Modern Mystic", "Bookworm Babe"] },
+          { text: "Rarely speaks but always reacts perfectly", tags: ["Nerdy Hermit", "Minimal Techie", "Fitness Flirt"] },
+          { text: "Constant ‘look at this weird thing I bought’", tags: ["DIY Dabbler", "Snack Connoisseur", "Candle Hoarder"] },
+          { text: "Drops playlists + aesthetic photos only", tags: ["Color Theory Enthusiast", "Music Collector", "Silent Film Fan"] }
+        ]
+      },
+      {
+        question: "What is their usual fashion inspo?",
+        answers: [
+          { text: "Dark layers, candles, lace", tags: ["Goth Romantic", "Dark Academia", "Modern Mystic"] },
+          { text: "Retro thrift-core with pins", tags: ["Vintage Lover", "Grunge Softie", "Skater Poet"] },
+          { text: "Sleek athleisure + skincare glow", tags: ["Fitness Flirt", "Wellness Guru", "Skincare Alchemist"] },
+          { text: "Pastel overload, big eyes, bigger bows", tags: ["Kawaii Cutie", "Sparkle Goblin", "Whimsical Fairy"] },
+          { text: "Hiking boots + utility jacket", tags: ["Outdoor Adventurer", "Pet-Obsessed Pal", "Zero-Waste Wizard"] },
+          { text: "Structured minimalist with edge", tags: ["Minimalist Power Exec", "Minimal Techie", "Hypebeast Hipster"] }
+        ]
+      },
+      {
+        question: "They would never leave home without…",
+        answers: [
+          { text: "A book they will read later", tags: ["Bookworm Babe", "Silent Film Fan", "Dark Academia"] },
+          { text: "A reusable water bottle", tags: ["Sustainable Queen", "Zero-Waste Wizard", "Outdoor Adventurer"] },
+          { text: "A tote full of snacks", tags: ["Snack Connoisseur", "DIY Dabbler", "Chaotic Baker"] },
+          { text: "A notebook of ideas", tags: ["Skater Poet", "Crafty Goblin", "Artsy Maximalist"] },
+          { text: "A perfectly layered outfit", tags: ["Hypebeast Hipster", "Color Theory Enthusiast", "Kawaii Cutie"] },
+          { text: "A multi-step skincare kit", tags: ["Skincare Alchemist", "Wellness Guru", "Minimalist Power Exec"] }
+        ]
+      }
+    ];
+
+    const userAnswers = [];
+    const quizContainer = document.getElementById("quiz");
+
+  quizData.forEach((q, qIndex) => {
+    const div = document.createElement("div");
+    div.className = "question";
+    const h3 = document.createElement("h3");
+    h3.textContent = q.question;
+    div.appendChild(h3);
+    const answersDiv = document.createElement("div");
+    answersDiv.className = "answers";
+
+    q.answers.forEach((a, aIndex) => {
+      const btn = document.createElement("button");
+      btn.textContent = a.text;
+      btn.onclick = () => {
+        userAnswers[qIndex] = a;
+        [...answersDiv.children].forEach(b => b.disabled = true);
+        btn.style.backgroundColor = "#cef";
+        checkCompletion();
+      };
+      answersDiv.appendChild(btn);
+    });
+
+    div.appendChild(answersDiv);
+    quizContainer.appendChild(div);
+  });
+
+  function checkCompletion() {
+    if (userAnswers.length === quizData.length && userAnswers.every(Boolean)) {
+      document.getElementById("submit").style.display = "block";
+    }
+  }
+
+  const vibeDescriptions = {
+    "Cottagecore Witch": "Loves wildflowers, herbal teas, and casting spells with Pinterest boards.",
+    "Minimalist Power Exec": "Streamlined, sharp-dressed, probably owns four different productivity planners.",
+    "Sparkle Goblin": "Chaotic good with glitter in their veins and a disco ball for a soul.",
+    "Nerdy Hermit": "Would rather be in a blanket fort solving puzzles or rewatching sci-fi classics.",
+    "Plant Parent": "Their succulents have names. Their Monstera gets misted daily.",
+    "Cozy Gamer": "Beanie-wearing, tea-sipping, and thriving in Stardew Valley.",
+    "Vintage Lover": "Lives for thrift shops, polaroids, and all things retro and romantic.",
+    "Dark Academia": "Quotes dead poets, hoards antique books, and loves moody weather.",
+    "Light Academia": "Dreams in sepia, romanticizes libraries, and probably writes letters by hand.",
+    "Celestial Dreamer": "Star maps, moon phases, and a galaxy print everything kind of vibe.",
+    "Artsy Maximalist": "More is more. Colors clash. Walls are covered in DIY art and inspiration boards.",
+      "Outdoor Adventurer": "Loves a good hike, owns a thousand water bottles, and always smells like pine.",
+      "Whimsical Fairy": "Floaty dresses, pastel sparkles, and probably believes in mushrooms with feelings.",
+      "Modern Mystic": "Burns incense, reads tarot, and has impeccable Instagram story aesthetics.",
+      "Goth Romantic": "Loves black lace, candlelit poetry, and dramatic eyeliner.",
+      "Kawaii Cutie": "Bubble tea in one hand, plushie in the other. Hello Kitty is a lifestyle.",
+      "Wellness Guru": "Cleanses their crystals and their gut. Lives for Sunday reset routines.",
+      "Skater Poet": "Shreds pavement by day, writes existential free verse by night.",
+      "Bookworm Babe": "Has a TBR pile taller than them and a tote bag full of paperbacks.",
+      "Crafty Goblin": "Loves hot glue, glitter, and starting way more DIYs than they finish.",
+      "Astro Nerd": "Reads NASA blogs and their Co-Star app with equal intensity.",
+      "Coffee Snob": "Owns a gooseneck kettle and judges you for using instant.",
+      "Teatime Royalty": "Vintage teacups, heirloom biscuits, and afternoon elegance always.",
+      "Pet-Obsessed Pal": "Buys birthday gifts for their cat. Talks about dogs like they are children.",
+      "Fitness Flirt": "Lives in athleisure and drops squat stats into casual conversation.",
+      "Sustainable Queen": "Zero-waste, zero-plastic, all about ethical everything.",
+      "Grunge Softie": "Looks like they steal your hoodie, actually writes you poetry.",
+      "Puzzle Geek": "Spends hours solving things others give up on. Owns at least one Rubik's cube.",
+      "Chaotic Baker": "Flour everywhere. Results vary. Vibes are always delicious.",
+      "Music Collector": "Still buys vinyl. Cannot hang out until they finish curating the perfect playlist.",
+      "Skincare Alchemist": "Their bathroom looks like a laboratory, and they love it.",
+      "Zero-Waste Wizard": "Can fit a year of trash in a jar and makes soap for fun.",
+      "Minimal Techie": "Lives clean, codes cleaner. Probably uses Notion religiously.",
+      "Retro Gamer": "Lives for pixel art, cartridge consoles, and old-school cheat codes.",
+      "Hypebeast Hipster": "Fresh sneakers, limited drops, and a permanent thrift radar.",
+      "Color Theory Enthusiast": "Everything they own matches. Including their snacks.",
+      "Silent Film Fan": "Black-and-white everything and a love for drama without dialogue.",
+      "DIY Dabbler": "Will try to build a table from scratch. Ends up with a new bookshelf instead.",
+      "Snack Connoisseur": "Knows 12 kinds of popcorn seasoning. Always has a treat in their bag.",
+      "Candle Hoarder": "Has a candle for every mood and a lighter in every drawer.",
+      "Mindful Gifter": "Gives the most thoughtful presents, always with a handwritten note."
+    };
+
+
+    document.getElementById("submit").onclick = () => {
+  const score = {};
+  userAnswers.forEach(ans => {
+    ans.tags.forEach(tag => {
+      score[tag] = (score[tag] || 0) + 1;
+    });
+  });
+
+  const topVibe = Object.entries(score).sort((a, b) => b[1] - a[1])[0][0];
+
+  document.getElementById("result").innerHTML = `
+    Their vibe is: <strong>${topVibe}</strong><br>
+    <em>${vibeDescriptions[topVibe] || "A unique soul with mysterious tastes."}</em>
+    <div id="gift-suggestions">Loading gift suggestions...</div>
+  `;
+
+  // Correctly fetch and display gift suggestions
+  fetch('mock_indie_gifts.json')
+    .then(res => res.json())
+    .then(gifts => {
+      const matchingGifts = gifts.filter(gift => gift.vibe_tags.includes(topVibe));
+      const giftContainer = document.getElementById("gift-suggestions");
+
+      if (matchingGifts.length === 0) {
+        giftContainer.innerHTML = "<p>No gifts found for this vibe yet!</p>";
+        return;
+      }
+
+      giftContainer.innerHTML = matchingGifts.map(gift => `
+  <div style="margin-top:1rem;padding:1rem;border-radius:8px;background-color:var(--color-bg);">
+    <strong>${gift.title}</strong><br>
+    <img src="${gift.image_url}" alt="${gift.title}" style="width:150px;border-radius:8px;margin-top:0.5rem;">
+    <p>Price: $${gift.price}</p>
+    <a href="${gift.product_url}" target="_blank" style="color:var(--color-highlight);">Buy Now from ${gift.shop_name}</a>
+  </div>
+`).join('');
+    })
+    .catch(err => {
+      document.getElementById("gift-suggestions").innerHTML = "Error loading gift suggestions.";
+      console.error("Could not load gifts.json", err);
+    });
+};
+
+  </script>
+</body>
+</html>
