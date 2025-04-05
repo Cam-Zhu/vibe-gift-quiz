@@ -351,10 +351,11 @@ h1 {
   const topVibe = Object.entries(score).sort((a, b) => b[1] - a[1])[0][0];
 
 
-  document.getElementById("result").innerHTML = `
-Their vibe is: <strong>${topVibe}</strong><br>
-<em>${vibeDescriptions[topVibe] || "A unique soul with mysterious tastes."}</em>
-`).join('')}
+document.getElementById("result").innerHTML = `
+  Their vibe is: <strong>${topVibe}</strong><br>
+  <em>${vibeDescriptions[topVibe] || "A unique soul with mysterious tastes."}</em>
+  <div id="gift-suggestions">Loading gift suggestions...</div>
+`;
 
     <div id="gift-suggestions">Loading gift suggestions...</div>
   `;
@@ -363,9 +364,10 @@ Their vibe is: <strong>${topVibe}</strong><br>
   fetch('mock_indie_gifts.json')
     .then(res => res.json())
     .then(gifts => {
-     const matchingGifts = gifts.filter(gift =>
-  gift.vibe_tags.some(tag => topVibes.includes(tag))
+    const matchingGifts = gifts.filter(gift =>
+  gift.vibe_tags.includes(topVibe)
 );
+
       const giftContainer = document.getElementById("gift-suggestions");
 
       if (matchingGifts.length === 0) {
@@ -373,7 +375,7 @@ Their vibe is: <strong>${topVibe}</strong><br>
         return;
       }
 
-      giftContainer.innerHTML = matchingGifts.map(gift => `
+     giftContainer.innerHTML = matchingGifts.slice(0, 5).map(gift => `
   <div style="margin-top:1rem;padding:1rem;border-radius:8px;background-color:var(--color-bg);">
     <strong>${gift.title}</strong><br>
     <img src="${gift.image_url}" alt="${gift.title}" style="width:150px;border-radius:8px;margin-top:0.5rem;">
