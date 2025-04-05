@@ -348,18 +348,12 @@ h1 {
     });
   });
 
-  const topVibes = Object.entries(score)
-  .sort((a, b) => b[1] - a[1])
-  .slice(0, 5)
-  .map(entry => entry[0]);
+  const topVibe = Object.entries(score).sort((a, b) => b[1] - a[1])[0][0];
 
 
   document.getElementById("result").innerHTML = `
-Their top vibes are: ${topVibes.map(vibe => `
-  <div style="margin-top:1rem;">
-    <strong>${vibe}</strong><br>
-    <em>${vibeDescriptions[vibe] || "A unique soul with mysterious tastes."}</em>
-  </div>
+Their vibe is: <strong>${topVibe}</strong><br>
+<em>${vibeDescriptions[topVibe] || "A unique soul with mysterious tastes."}</em>
 `).join('')}
 
     <div id="gift-suggestions">Loading gift suggestions...</div>
